@@ -11,10 +11,10 @@ datasource db {
 }
 
 model ShortenedURL {
-  id             Int      @id @default(autoincrement())
-  originalUrl    String
-  shortCode      String   @unique
+  ID             String   @id @default(uuid())
+  originalUrl    String?
   customAlias    String?  @unique
+  shortenUrl     String?  @unique
   expirationDate DateTime
   createdAt      DateTime @default(now())
 }
