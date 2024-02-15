@@ -3,7 +3,7 @@ import UrlShortService from "../service/url-short.service";
 import { Request, Response, NextFunction } from "express";
 
 async function sendResponse(res: Response, result: any) {
-  return res.status(result.status).json({
+  return res.status(result.status || 500).json({
     success: result.success,
     message: result.message,
     data: result.data,
@@ -69,7 +69,9 @@ async function getRedirectUrl(req: Request, res: Response, next: NextFunction) {
   try {
     const { customAlias } = req.params;
     const result = await urlShortService.getRedirectUrl(customAlias);
-    res.status(302).redirect(result.data.originalUrl);
+    if (result.success) {
+      res.status(result.status).redirect(result.data.originalUrl);
+    }
   } catch (error: any) {
     next(error);
   }
