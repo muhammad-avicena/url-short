@@ -16,10 +16,18 @@ class UrlShortService implements IUrlShortService {
     originalUrl: string,
     customAlias: string | null
   ): Promise<IUrlShortResult> {
-    if (!originalUrl) {
+    if (!originalUrl || Object.keys(originalUrl).length === 0) {
       throw new StandardError({
         success: false,
         message: "Original URL is required",
+        status: 400,
+      });
+    }
+
+    if (customAlias && customAlias.length > 16) {
+      throw new StandardError({
+        success: false,
+        message: "Custom alias cannot exceed 16 characters",
         status: 400,
       });
     }
@@ -53,7 +61,7 @@ class UrlShortService implements IUrlShortService {
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -61,7 +69,7 @@ class UrlShortService implements IUrlShortService {
   async getRedirectUrl(customAlias: string): Promise<IUrlShortResult> {
     try {
       const result = await this.urlShortDao.getRedirectUrl(customAlias);
-      if (!result) {
+      if (!result || Object.keys(result).length === 0) {
         throw new StandardError({
           success: false,
           message: "Short URL not found",
@@ -79,7 +87,7 @@ class UrlShortService implements IUrlShortService {
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -118,7 +126,7 @@ class UrlShortService implements IUrlShortService {
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -144,7 +152,7 @@ class UrlShortService implements IUrlShortService {
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
@@ -163,7 +171,7 @@ class UrlShortService implements IUrlShortService {
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: error.status,
       });
     }
   }
