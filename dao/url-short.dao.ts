@@ -1,4 +1,7 @@
-import { generateJakartaDate } from "../utils/helpers/jakarta-time";
+import {
+  generateJakartaDate,
+  generateJakartaDateFiveYearsLater,
+} from "../utils/helpers/jakarta-time";
 import { PrismaClient } from "@prisma/client";
 import { IUrlShortAttributes, IUrlShortDao } from "../utils/types";
 import StandardError from "../utils/constants/standard-error";
@@ -10,23 +13,35 @@ class UrlShortDao implements IUrlShortDao {
     this.db = db;
   }
 
-  async createShortUrl({
-    originalUrl,
-    shortCode,
-    customAlias,
-    expirationDate,
-  }: IUrlShortAttributes): Promise<IUrlShortAttributes> {
+  async getAllShortUrls(): Promise<IUrlShortAttributes[]> {
+    try {
+      const result = await this.db.shortenedURL.findMany();
+      return result;
+    } catch (error: any) {
+      console.error("UrlShortDao - getAllShortUrls:", error);
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: 500,
+      });
+    }
+  }
+
+  async createShortUrl(
+    originalUrl: string,
+    shortenUrl: string,
+    customAlias: string | null
+  ): Promise<IUrlShortAttributes> {
     try {
       const result = await this.db.shortenedURL.create({
         data: {
           originalUrl: originalUrl ?? "",
-          shortCode: shortCode ?? "",
-          expirationDate: expirationDate ?? "",
+          shortenUrl: shortenUrl ?? "",
           customAlias: customAlias ?? null,
+          expirationDate: generateJakartaDateFiveYearsLater(),
           createdAt: generateJakartaDate(),
         },
       });
-      console.log("UrlShortDao - createShortUrl:", result);
       return result;
     } catch (error: any) {
       console.error("UrlShortDao - createShortUrl:", error);
@@ -38,17 +53,19 @@ class UrlShortDao implements IUrlShortDao {
     }
   }
 
-  async updateShortUrlByShortCode(
-    shortCode: string,
-    originalUrl: string
+  async updateShortUrlByID(
+    ID: string,
+    originalUrl: string,
+    customAlias: string
   ): Promise<IUrlShortAttributes> {
     try {
       const result = await this.db.shortenedURL.update({
         where: {
-          shortCode,
+          ID,
         },
         data: {
           originalUrl,
+          customAlias,
         },
       });
       return result;
@@ -62,13 +79,18 @@ class UrlShortDao implements IUrlShortDao {
     }
   }
 
-  async getAllShortUrls(): Promise<IUrlShortAttributes[]> {
+  async getUrlShortByCustomAlias(
+    customAlias: string
+  ): Promise<IUrlShortAttributes> {
     try {
-      const result = await this.db.shortenedURL.findMany();
-      console.log("UrlShortDao - getAllShortUrls:", result);
-      return result;
+      const result = await this.db.shortenedURL.findUnique({
+        where: {
+          customAlias,
+        },
+      });
+      return result ?? {};
     } catch (error: any) {
-      console.error("UrlShortDao - getAllShortUrls:", error);
+      console.error("UrlShortDao - getUrlShortByCustomAlias:", error);
       throw new StandardError({
         success: false,
         message: error.message,
@@ -77,16 +99,13 @@ class UrlShortDao implements IUrlShortDao {
     }
   }
 
-  async deleteShortUrlByShortCode(
-    shortCode: string
-  ): Promise<IUrlShortAttributes> {
+  async deleteShortUrlByID(ID: string): Promise<IUrlShortAttributes> {
     try {
       const result = await this.db.shortenedURL.delete({
         where: {
-          shortCode,
+          ID,
         },
       });
-      console.log("UrlShortDao - deleteShortUrlByShortCode:", result);
       return result;
     } catch (error: any) {
       console.error("UrlShortDao - deleteShortUrlByShortCode:", error);

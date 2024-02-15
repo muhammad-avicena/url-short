@@ -1,55 +1,82 @@
 import StandardError from "../utils/constants/standard-error";
 import {
   IUrlShortDao,
-  IUrlShortAttributes,
   IUrlShortResult,
+  IUrlShortService,
 } from "../utils/types";
 
-class UrlShortService {
+class UrlShortService implements IUrlShortService {
   private urlShortDao: IUrlShortDao;
 
   constructor(urlShortDao: IUrlShortDao) {
     this.urlShortDao = urlShortDao;
   }
 
-  async createShortUrl({
-    originalUrl,
-    shortCode,
-    customAlias,
-    expirationDate,
-  }: IUrlShortAttributes): Promise<IUrlShortResult> {
+  async createShortUrl(
+    originalUrl: string,
+    shortCode: string,
+    customAlias: string | null
+  ): Promise<IUrlShortResult> {
     try {
-      const result = await this.urlShortDao.createShortUrl({
+      const getCustomAlias = await this.urlShortDao.getUrlShortByCustomAlias(
+        customAlias ?? ""
+      );
+
+      if (getCustomAlias && getCustomAlias.customAlias === customAlias) {
+        throw new StandardError({
+          success: false,
+          message: "Custom alias already exists. Please use another alias",
+          status: 400,
+        });
+      }
+
+      const result = await this.urlShortDao.createShortUrl(
         originalUrl,
         shortCode,
-        customAlias,
-        expirationDate,
-      });
+        customAlias
+      );
+
       return {
         success: true,
+        status: 200,
         message: "Short URL created",
         data: result,
       };
     } catch (error: any) {
       console.error("UrlShortService - createShortUrl:", error);
       throw new StandardError({
-        success: error.success,
+        success: false,
         message: error.message,
-        status: error.status,
+        status: 500,
       });
     }
   }
 
-  async updateShortUrl(
-    shortCode: string,
-    originalUrl: string
+  async updateShortUrlByID(
+    ID: string,
+    originalUrl: string,
+    customAlias: string
   ): Promise<IUrlShortResult> {
     try {
-      const result = await this.urlShortDao.updateShortUrlByShortCode(
-        shortCode,
-        originalUrl
+      const getCustomAlias = await this.urlShortDao.getUrlShortByCustomAlias(
+        customAlias ?? ""
+      );
+
+      if (getCustomAlias && getCustomAlias.customAlias === customAlias) {
+        throw new StandardError({
+          success: false,
+          message: "Custom alias already exists. Please use another alias",
+          status: 400,
+        });
+      }
+
+      const result = await this.urlShortDao.updateShortUrlByID(
+        ID,
+        originalUrl,
+        customAlias
       );
       return {
+        status: 200,
         success: true,
         message: "Short URL updated",
         data: result,
@@ -57,9 +84,9 @@ class UrlShortService {
     } catch (error: any) {
       console.error("UrlShortService - updateShortUrl:", error);
       throw new StandardError({
-        success: error.success,
+        success: false,
         message: error.message,
-        status: error.status,
+        status: 500,
       });
     }
   }
@@ -75,6 +102,7 @@ class UrlShortService {
         });
       }
       return {
+        status: 200,
         success: true,
         message: "List of All Short URLs",
         data: result,
@@ -82,19 +110,18 @@ class UrlShortService {
     } catch (error: any) {
       console.error("UrlShortService - getAllShortUrls:", error);
       throw new StandardError({
-        success: error.success,
+        success: false,
         message: error.message,
-        status: error.status,
+        status: 500,
       });
     }
   }
 
-  async deleteShortUrl(shortCode: string): Promise<IUrlShortResult> {
+  async deleteShortUrlByID(ID: string): Promise<IUrlShortResult> {
     try {
-      const result = await this.urlShortDao.deleteShortUrlByShortCode(
-        shortCode
-      );
+      const result = await this.urlShortDao.deleteShortUrlByID(ID);
       return {
+        status: 200,
         success: true,
         message: "Short URL deleted",
         data: result,
@@ -102,9 +129,9 @@ class UrlShortService {
     } catch (error: any) {
       console.error("UrlShortService - deleteShortUrl:", error);
       throw new StandardError({
-        success: error.success,
+        success: false,
         message: error.message,
-        status: error.status,
+        status: 500,
       });
     }
   }
