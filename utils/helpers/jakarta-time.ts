@@ -6,3 +6,8 @@ export function generateJakartaDate(): string {
   const gmtPlus7Date = moment().utcOffset("+07:00").format();
   return gmtPlus7Date;
 }
+
+export function generateJakartaDateFiveYearsLater(): string {
+  const gmtPlus7Date = moment().add(5, "years").utcOffset("+07:00").format();
+  return gmtPlus7Date;
+}
