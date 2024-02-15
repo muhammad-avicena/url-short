@@ -10,10 +10,10 @@ export interface IUrlShortAttributes {
 export interface IUrlShortDao {
   createShortUrl(
     originalUrl: string,
-    shortCode: string,
     customAlias: string | null
   ): Promise<IUrlShortAttributes>;
   getUrlShortByCustomAlias(customAlias: string): Promise<IUrlShortAttributes>;
+  getRedirectUrl(customAlias: string): Promise<IUrlShortAttributes>;
   updateShortUrlByID(
     ID: string,
     originalUrl: string,
@@ -34,9 +34,9 @@ export interface IUrlShortService {
   getAllShortUrls(): Promise<IUrlShortResult>;
   createShortUrl(
     originalUrl: string,
-    shortCode: string,
     customAlias: string
   ): Promise<IUrlShortResult>;
+  getRedirectUrl(customAlias: string): Promise<IUrlShortResult>;
   updateShortUrlByID(
     ID: string,
     originalUrl: string,
