@@ -34,13 +34,8 @@ async function createShortUrl(req: Request, res: Response, next: NextFunction) {
     res,
     next,
     async (urlShortService: UrlShortService) => {
-      const { originalUrl, shortenUrl, customAlias } = req.body;
-      console.log(req.body);
-      return await urlShortService.createShortUrl(
-        originalUrl,
-        shortenUrl,
-        customAlias
-      );
+      const { originalUrl, customAlias } = req.body;
+      return await urlShortService.createShortUrl(originalUrl, customAlias);
     }
   );
 }
@@ -64,6 +59,20 @@ async function updateShortUrlByID(
       );
     }
   );
+}
+
+async function getRedirectUrl(req: Request, res: Response, next: NextFunction) {
+  const { db } = req;
+  const urlShortDao = new UrlShortDao(db);
+  const urlShortService = new UrlShortService(urlShortDao);
+
+  try {
+    const { customAlias } = req.params;
+    const result = await urlShortService.getRedirectUrl(customAlias);
+    res.status(302).redirect(result.data.originalUrl);
+  } catch (error: any) {
+    next(error);
+  }
 }
 
 async function getAllShortUrls(
@@ -100,6 +109,7 @@ async function deleteShortUrlByID(
 export {
   getAllShortUrls,
   createShortUrl,
+  getRedirectUrl,
   updateShortUrlByID,
   deleteShortUrlByID,
 };

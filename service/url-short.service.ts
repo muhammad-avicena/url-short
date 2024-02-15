@@ -14,9 +14,16 @@ class UrlShortService implements IUrlShortService {
 
   async createShortUrl(
     originalUrl: string,
-    shortCode: string,
     customAlias: string | null
   ): Promise<IUrlShortResult> {
+    if (!originalUrl) {
+      throw new StandardError({
+        success: false,
+        message: "Original URL is required",
+        status: 400,
+      });
+    }
+
     try {
       const getCustomAlias = await this.urlShortDao.getUrlShortByCustomAlias(
         customAlias ?? ""
@@ -25,14 +32,13 @@ class UrlShortService implements IUrlShortService {
       if (getCustomAlias && getCustomAlias.customAlias === customAlias) {
         throw new StandardError({
           success: false,
-          message: "Custom alias already exists. Please use another alias",
+          message: `Custom alias "${customAlias}" already exists. Please use another alias`,
           status: 400,
         });
       }
 
       const result = await this.urlShortDao.createShortUrl(
         originalUrl,
-        shortCode,
         customAlias
       );
 
@@ -44,6 +50,32 @@ class UrlShortService implements IUrlShortService {
       };
     } catch (error: any) {
       console.error("UrlShortService - createShortUrl:", error);
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: 500,
+      });
+    }
+  }
+
+  async getRedirectUrl(customAlias: string): Promise<IUrlShortResult> {
+    try {
+      const result = await this.urlShortDao.getRedirectUrl(customAlias);
+      if (!result) {
+        throw new StandardError({
+          success: false,
+          message: "Short URL not found",
+          status: 404,
+        });
+      }
+      return {
+        success: true,
+        status: 302,
+        message: "Redirecting...",
+        data: result,
+      };
+    } catch (error: any) {
+      console.error("UrlShortService - getRedirectUrl:", error);
       throw new StandardError({
         success: false,
         message: error.message,

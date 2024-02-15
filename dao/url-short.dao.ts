@@ -1,3 +1,4 @@
+import "dotenv/config";
 import {
   generateJakartaDate,
   generateJakartaDateFiveYearsLater,
@@ -29,15 +30,15 @@ class UrlShortDao implements IUrlShortDao {
 
   async createShortUrl(
     originalUrl: string,
-    shortenUrl: string,
-    customAlias: string | null
+    customAlias: string
   ): Promise<IUrlShortAttributes> {
     try {
+      const generatedShortenUrl = this.generateShortUrl();
       const result = await this.db.shortenedURL.create({
         data: {
           originalUrl: originalUrl ?? "",
-          shortenUrl: shortenUrl ?? "",
-          customAlias: customAlias ?? null,
+          customAlias: customAlias ? customAlias : generatedShortenUrl,
+          shortenUrl: customAlias ? customAlias : generatedShortenUrl,
           expirationDate: generateJakartaDateFiveYearsLater(),
           createdAt: generateJakartaDate(),
         },
@@ -51,6 +52,20 @@ class UrlShortDao implements IUrlShortDao {
         status: 500,
       });
     }
+  }
+
+  generateShortUrl() {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const length = 6;
+    let shortUrl = "";
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      shortUrl += characters[randomIndex];
+    }
+
+    return shortUrl;
   }
 
   async updateShortUrlByID(
@@ -71,6 +86,24 @@ class UrlShortDao implements IUrlShortDao {
       return result;
     } catch (error: any) {
       console.error("UrlShortDao - updateShortUrl:", error);
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: 500,
+      });
+    }
+  }
+
+  async getRedirectUrl(customAlias: string): Promise<IUrlShortAttributes> {
+    try {
+      const result = await this.db.shortenedURL.findUnique({
+        where: {
+          customAlias,
+        },
+      });
+      return result ?? {};
+    } catch (error: any) {
+      console.error("UrlShortDao - getRedirectUrl:", error);
       throw new StandardError({
         success: false,
         message: error.message,
