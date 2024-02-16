@@ -1,9 +1,13 @@
+import "dotenv/config";
 import StandardError from "../utils/constants/standard-error";
 import {
   IUrlShortDao,
   IUrlShortResult,
   IUrlShortService,
 } from "../utils/types";
+import Redis from "ioredis";
+
+const redisClient = new Redis(process.env.REDIS_URL as string);
 
 class UrlShortService implements IUrlShortService {
   private urlShortDao: IUrlShortDao;
@@ -67,27 +71,46 @@ class UrlShortService implements IUrlShortService {
   }
 
   async getRedirectUrl(customAlias: string): Promise<IUrlShortResult> {
+    const CACHE_KEY = `redirectUrl:${customAlias}`;
     try {
-      const result = await this.urlShortDao.getRedirectUrl(customAlias);
-      if (!result || Object.keys(result).length === 0) {
-        throw new StandardError({
-          success: false,
-          message: "Short URL not found",
-          status: 404,
-        });
+      const cachedResult = await redisClient.get(CACHE_KEY);
+
+      if (cachedResult) {
+        return JSON.parse(cachedResult);
+      } else {
+        const result = await this.urlShortDao.getRedirectUrl(customAlias);
+
+        if (!result || Object.keys(result).length === 0) {
+          throw new StandardError({
+            success: false,
+            message: "Short URL not found",
+            status: 404,
+          });
+        }
+        await redisClient.set(
+          CACHE_KEY,
+          JSON.stringify({
+            success: true,
+            status: 302,
+            message: "Redirecting...",
+            data: result,
+          }),
+          "EX",
+          300
+        );
+        return {
+          success: true,
+          status: 302,
+          message: "Redirecting...",
+          data: result,
+        };
       }
-      return {
-        success: true,
-        status: 302,
-        message: "Redirecting...",
-        data: result,
-      };
     } catch (error: any) {
       console.error("UrlShortService - getRedirectUrl:", error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: error.status,
+        status: error.status ?? 500,
       });
     }
   }
@@ -132,27 +155,48 @@ class UrlShortService implements IUrlShortService {
   }
 
   async getAllShortUrls(): Promise<IUrlShortResult> {
+    const CACHE_KEY = "allShortUrls";
     try {
-      const result = await this.urlShortDao.getAllShortUrls();
-      if (!result || result.length === 0) {
-        throw new StandardError({
-          success: false,
-          message: "Short URLs not found or empty",
-          status: 404,
-        });
+      const cachedResult = await redisClient.get(CACHE_KEY);
+
+      if (cachedResult) {
+        return JSON.parse(cachedResult);
+      } else {
+        const result = await this.urlShortDao.getAllShortUrls();
+
+        if (!result || result.length === 0) {
+          throw new StandardError({
+            success: false,
+            message: "Short URLs not found or empty",
+            status: 404,
+          });
+        }
+
+        await redisClient.set(
+          CACHE_KEY,
+          JSON.stringify({
+            status: 200,
+            success: true,
+            message: "List of All Short URLs (cached)",
+            data: result,
+          }),
+          "EX",
+          3600
+        );
+
+        return {
+          status: 200,
+          success: true,
+          message: "List of All Short URLs",
+          data: result,
+        };
       }
-      return {
-        status: 200,
-        success: true,
-        message: "List of All Short URLs",
-        data: result,
-      };
     } catch (error: any) {
       console.error("UrlShortService - getAllShortUrls:", error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: error.status,
+        status: error.status ?? 500,
       });
     }
   }
