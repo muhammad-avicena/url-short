@@ -1,8 +1,8 @@
-import { Application } from "express";
-import morgan from "morgan";
+import { Application } from 'express';
+import morgan from 'morgan';
 
 const morganMiddleware = (app: Application) => {
-  app.use(morgan("dev"));
+  app.use(morgan('dev'));
 };
 
 export default morganMiddleware;

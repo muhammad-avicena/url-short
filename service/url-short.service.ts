@@ -1,11 +1,11 @@
-import "dotenv/config";
-import StandardError from "../utils/constants/standard-error";
+import 'dotenv/config';
+import StandardError from '../utils/constants/standard-error';
 import {
   IUrlShortDao,
   IUrlShortResult,
-  IUrlShortService,
-} from "../utils/types";
-import Redis from "ioredis";
+  IUrlShortService
+} from '../utils/types';
+import Redis from 'ioredis';
 
 const redisClient = new Redis(process.env.REDIS_URL as string);
 
@@ -23,29 +23,29 @@ class UrlShortService implements IUrlShortService {
     if (!originalUrl || Object.keys(originalUrl).length === 0) {
       throw new StandardError({
         success: false,
-        message: "Original URL is required",
-        status: 400,
+        message: 'Original URL is required',
+        status: 400
       });
     }
 
     if (customAlias && customAlias.length > 16) {
       throw new StandardError({
         success: false,
-        message: "Custom alias cannot exceed 16 characters",
-        status: 400,
+        message: 'Custom alias cannot exceed 16 characters',
+        status: 400
       });
     }
 
     try {
       const getCustomAlias = await this.urlShortDao.getUrlShortByCustomAlias(
-        customAlias ?? ""
+        customAlias ?? ''
       );
 
       if (getCustomAlias && getCustomAlias.customAlias === customAlias) {
         throw new StandardError({
           success: false,
           message: `Custom alias "${customAlias}" already exists. Please use another alias`,
-          status: 400,
+          status: 400
         });
       }
 
@@ -57,15 +57,15 @@ class UrlShortService implements IUrlShortService {
       return {
         success: true,
         status: 200,
-        message: "Short URL created",
-        data: result,
+        message: 'Short URL created',
+        data: result
       };
     } catch (error: any) {
-      console.error("UrlShortService - createShortUrl:", error);
+      console.error('UrlShortService - createShortUrl:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: error.status,
+        status: error.status
       });
     }
   }
@@ -83,8 +83,8 @@ class UrlShortService implements IUrlShortService {
         if (!result || Object.keys(result).length === 0) {
           throw new StandardError({
             success: false,
-            message: "Short URL not found",
-            status: 404,
+            message: 'Short URL not found',
+            status: 404
           });
         }
         await redisClient.set(
@@ -92,25 +92,25 @@ class UrlShortService implements IUrlShortService {
           JSON.stringify({
             success: true,
             status: 302,
-            message: "Redirecting...",
-            data: result,
+            message: 'Redirecting...',
+            data: result
           }),
-          "EX",
+          'EX',
           300
         );
         return {
           success: true,
           status: 302,
-          message: "Redirecting...",
-          data: result,
+          message: 'Redirecting...',
+          data: result
         };
       }
     } catch (error: any) {
-      console.error("UrlShortService - getRedirectUrl:", error);
+      console.error('UrlShortService - getRedirectUrl:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: error.status ?? 500,
+        status: error.status ?? 500
       });
     }
   }
@@ -119,30 +119,29 @@ class UrlShortService implements IUrlShortService {
     CustomAlias: string
   ): Promise<IUrlShortResult> {
     try {
-      const result = await this.urlShortDao.getUrlShortByCustomAlias(
-        CustomAlias
-      );
+      const result =
+        await this.urlShortDao.getUrlShortByCustomAlias(CustomAlias);
 
       if (!result || Object.keys(result).length === 0) {
         throw new StandardError({
           success: false,
-          message: "Short URL not found",
-          status: 404,
+          message: 'Short URL not found',
+          status: 404
         });
       }
 
       return {
         status: 200,
         success: true,
-        message: "Short URL found",
-        data: result,
+        message: 'Short URL found',
+        data: result
       };
     } catch (error: any) {
-      console.error("UrlShortService - getUrlShortByID:", error);
+      console.error('UrlShortService - getUrlShortByID:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: error.status,
+        status: error.status
       });
     }
   }
@@ -154,14 +153,14 @@ class UrlShortService implements IUrlShortService {
   ): Promise<IUrlShortResult> {
     try {
       const getCustomAlias = await this.urlShortDao.getUrlShortByCustomAlias(
-        customAlias ?? ""
+        customAlias ?? ''
       );
 
       if (getCustomAlias && getCustomAlias.customAlias === customAlias) {
         throw new StandardError({
           success: false,
-          message: "Custom alias already exists. Please use another alias",
-          status: 400,
+          message: 'Custom alias already exists. Please use another alias',
+          status: 400
         });
       }
 
@@ -173,21 +172,21 @@ class UrlShortService implements IUrlShortService {
       return {
         status: 200,
         success: true,
-        message: "Short URL updated",
-        data: result,
+        message: 'Short URL updated',
+        data: result
       };
     } catch (error: any) {
-      console.error("UrlShortService - updateShortUrl:", error);
+      console.error('UrlShortService - updateShortUrl:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: error.status,
+        status: error.status
       });
     }
   }
 
   async getAllShortUrls(): Promise<IUrlShortResult> {
-    const CACHE_KEY = "allShortUrls";
+    const CACHE_KEY = 'allShortUrls';
     try {
       const cachedResult = await redisClient.get(CACHE_KEY);
 
@@ -199,8 +198,8 @@ class UrlShortService implements IUrlShortService {
         if (!result || result.length === 0) {
           throw new StandardError({
             success: false,
-            message: "Short URLs not found or empty",
-            status: 404,
+            message: 'Short URLs not found or empty',
+            status: 404
           });
         }
 
@@ -209,26 +208,26 @@ class UrlShortService implements IUrlShortService {
           JSON.stringify({
             status: 200,
             success: true,
-            message: "List of All Short URLs (cached)",
-            data: result,
+            message: 'List of All Short URLs (cached)',
+            data: result
           }),
-          "EX",
+          'EX',
           3600
         );
 
         return {
           status: 200,
           success: true,
-          message: "List of All Short URLs",
-          data: result,
+          message: 'List of All Short URLs',
+          data: result
         };
       }
     } catch (error: any) {
-      console.error("UrlShortService - getAllShortUrls:", error);
+      console.error('UrlShortService - getAllShortUrls:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: error.status ?? 500,
+        status: error.status ?? 500
       });
     }
   }
@@ -239,15 +238,15 @@ class UrlShortService implements IUrlShortService {
       return {
         status: 200,
         success: true,
-        message: "Short URL deleted",
-        data: result,
+        message: 'Short URL deleted',
+        data: result
       };
     } catch (error: any) {
-      console.error("UrlShortService - deleteShortUrl:", error);
+      console.error('UrlShortService - deleteShortUrl:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: error.status,
+        status: error.status
       });
     }
   }

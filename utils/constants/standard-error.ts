@@ -5,7 +5,7 @@ class StandardError extends Error {
   constructor({
     success,
     message,
-    status,
+    status
   }: {
     success: boolean;
     message: string;

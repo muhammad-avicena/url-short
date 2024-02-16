@@ -14,6 +14,6 @@ RUN npx prisma generate
 
 RUN npx prisma db push
 
-EXPOSE 5001
+EXPOSE 5002
 
 CMD ["npm", "run", "start"]

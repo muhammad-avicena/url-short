@@ -1,12 +1,12 @@
-import UrlShortDao from "../dao/url-short.dao";
-import UrlShortService from "../service/url-short.service";
-import { Request, Response, NextFunction } from "express";
+import UrlShortDao from '../dao/url-short.dao';
+import UrlShortService from '../service/url-short.service';
+import { Request, Response, NextFunction } from 'express';
 
 async function sendResponse(res: Response, result: any) {
   return res.status(result.status || 500).json({
     success: result.success,
     message: result.message,
-    data: result.data,
+    data: result.data
   });
 }
 
@@ -130,5 +130,5 @@ export {
   getRedirectUrl,
   getUrlShortByCustomAlias,
   updateShortUrlByID,
-  deleteShortUrlByID,
+  deleteShortUrlByID
 };

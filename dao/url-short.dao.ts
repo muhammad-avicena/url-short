@@ -1,11 +1,10 @@
-import "dotenv/config";
 import {
   generateJakartaDate,
-  generateJakartaDateFiveYearsLater,
-} from "../utils/helpers/jakarta-time";
-import { PrismaClient } from "@prisma/client";
-import { IUrlShortAttributes, IUrlShortDao } from "../utils/types";
-import StandardError from "../utils/constants/standard-error";
+  generateJakartaDateFiveYearsLater
+} from '../utils/helpers/jakarta-time';
+import { PrismaClient } from '@prisma/client';
+import { IUrlShortAttributes, IUrlShortDao } from '../utils/types';
+import StandardError from '../utils/constants/standard-error';
 
 class UrlShortDao implements IUrlShortDao {
   private db: PrismaClient;
@@ -19,11 +18,11 @@ class UrlShortDao implements IUrlShortDao {
       const result = await this.db.shortenedURL.findMany();
       return result;
     } catch (error: any) {
-      console.error("UrlShortDao - getAllShortUrls:", error);
+      console.error('UrlShortDao - getAllShortUrls:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: 500
       });
     }
   }
@@ -36,29 +35,29 @@ class UrlShortDao implements IUrlShortDao {
       const generatedShortenUrl = this.generateShortUrl();
       const result = await this.db.shortenedURL.create({
         data: {
-          originalUrl: originalUrl ?? "",
+          originalUrl: originalUrl ?? '',
           customAlias: customAlias ? customAlias : generatedShortenUrl,
           shortenUrl: customAlias ? customAlias : generatedShortenUrl,
           expirationDate: generateJakartaDateFiveYearsLater(),
-          createdAt: generateJakartaDate(),
-        },
+          createdAt: generateJakartaDate()
+        }
       });
       return result;
     } catch (error: any) {
-      console.error("UrlShortDao - createShortUrl:", error);
+      console.error('UrlShortDao - createShortUrl:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: 500
       });
     }
   }
 
   generateShortUrl() {
     const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const length = 6;
-    let shortUrl = "";
+    let shortUrl = '';
 
     for (let i = 0; i < length; i++) {
       const randomIndex = Math.floor(Math.random() * characters.length);
@@ -76,20 +75,20 @@ class UrlShortDao implements IUrlShortDao {
     try {
       const result = await this.db.shortenedURL.update({
         where: {
-          ID,
+          ID
         },
         data: {
           originalUrl,
-          customAlias,
-        },
+          customAlias
+        }
       });
       return result;
     } catch (error: any) {
-      console.error("UrlShortDao - updateShortUrl:", error);
+      console.error('UrlShortDao - updateShortUrl:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: 500
       });
     }
   }
@@ -98,16 +97,16 @@ class UrlShortDao implements IUrlShortDao {
     try {
       const result = await this.db.shortenedURL.findUnique({
         where: {
-          customAlias,
-        },
+          customAlias
+        }
       });
       return result ?? {};
     } catch (error: any) {
-      console.error("UrlShortDao - getRedirectUrl:", error);
+      console.error('UrlShortDao - getRedirectUrl:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: 500
       });
     }
   }
@@ -118,16 +117,16 @@ class UrlShortDao implements IUrlShortDao {
     try {
       const result = await this.db.shortenedURL.findUnique({
         where: {
-          customAlias,
-        },
+          customAlias
+        }
       });
       return result ?? {};
     } catch (error: any) {
-      console.error("UrlShortDao - getUrlShortByCustomAlias:", error);
+      console.error('UrlShortDao - getUrlShortByCustomAlias:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: 500
       });
     }
   }
@@ -136,16 +135,16 @@ class UrlShortDao implements IUrlShortDao {
     try {
       const result = await this.db.shortenedURL.delete({
         where: {
-          ID,
-        },
+          ID
+        }
       });
       return result;
     } catch (error: any) {
-      console.error("UrlShortDao - deleteShortUrlByShortCode:", error);
+      console.error('UrlShortDao - deleteShortUrlByShortCode:', error);
       throw new StandardError({
         success: false,
         message: error.message,
-        status: 500,
+        status: 500
       });
     }
   }

@@ -1,8 +1,8 @@
-import "dotenv/config";
-import express, { Application } from "express";
-import routes from "./routes";
-import middleware from "./middleware";
-import errorHandlerMiddleware from "./middleware/error-handler.middleware";
+import 'dotenv/config';
+import express, { Application } from 'express';
+import routes from './routes';
+import middleware from './middleware';
+import errorHandlerMiddleware from './middleware/error-handler.middleware';
 
 const app: Application = express();
 const PORT: number = parseInt(process.env.PORT as string, 10) || 8080;

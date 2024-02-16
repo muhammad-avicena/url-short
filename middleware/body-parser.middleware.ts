@@ -1,4 +1,4 @@
-import express, { Application } from "express";
+import express, { Application } from 'express';
 
 const bodyParserMiddleware = (app: Application) => {
   app.use(express.json());

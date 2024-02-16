@@ -10,7 +10,7 @@ servers:
     description: 'Development server'
 components:
   schemas:
-    DataURLShort: 
+    DataURLShort:
       type: object
       properties:
         ID:
@@ -19,16 +19,16 @@ components:
         originalUrl:
           type: string
           default: https://github.com/muhammad-avicena
-        customAlias: 
+        customAlias:
           type: string
           default: github-avicena
-        shortenUrl: 
+        shortenUrl:
           type: string
           default: github-avicena
-        expirationDate: 
+        expirationDate:
           type: string
           default: 2029-02-16T08:46:36.000Z
-        createdAt: 
+        createdAt:
           type: string
           default: 2024-02-16T08:46:36.000Z
     CreateURLShort:
@@ -39,7 +39,7 @@ components:
           default: https://github.com/muhammad-avicena
         customAlias:
           type: string
-          maxLength: 16 
+          maxLength: 16
           default: github-avicena
       required:
         - originalUrl
@@ -51,7 +51,7 @@ components:
           default: https://github.com/muhammad-avicena
         customAlias:
           type: string
-          maxLength: 16 
+          maxLength: 16
           default: github-avicena
       required:
         - originalUrl
@@ -72,15 +72,15 @@ components:
       type: object
       properties:
         success:
-          type: boolean 
-          default: false 
+          type: boolean
+          default: false
         message:
           type: string
 paths:
   /api/v1/url-shorten:
     post:
       tags:
-        - url-shorten 
+        - url-shorten
       summary: 'Create URL Short'
       requestBody:
         content:
@@ -105,10 +105,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InternalServerError' 
+                $ref: '#/components/schemas/InternalServerError'
     get:
       tags:
-        - url-shorten 
+        - url-shorten
       summary: 'List of All URL Short'
       responses:
         '200':
@@ -128,7 +128,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InternalServerError'             
+                $ref: '#/components/schemas/InternalServerError'
   /api/v1/url-shorten/{ID}:
     put:
       operationId: Update URL Short list by ID
@@ -141,12 +141,12 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateURLShort'
       parameters:
-      - in: path
-        name: ID
-        required: true
-        schema:
-          type: string 
-        description: ID of the URL Short list
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+          description: ID of the URL Short list
       responses:
         '200':
           description: 'Short URL updated'
@@ -155,7 +155,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  success: 
+                  success:
                     type: boolean
                   message:
                     type: string
@@ -186,12 +186,12 @@ paths:
         - url-shorten
       summary: 'Delete URL Short list by ID'
       parameters:
-      - in: path
-        name: ID
-        required: true
-        schema:
-          type: string 
-        description: ID of the URL Short list
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+          description: ID of the URL Short list
       responses:
         '200':
           description: 'Short URL deleted'
@@ -200,7 +200,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  success: 
+                  success:
                     type: boolean
                   message:
                     type: string
@@ -232,12 +232,12 @@ paths:
         - url-shorten
       summary: 'Get URL Short list by customAlias'
       parameters:
-      - in: path
-        name: customAlias
-        required: true
-        schema:
-          type: string 
-        description: customAlias of the URL Short list
+        - in: path
+          name: customAlias
+          required: true
+          schema:
+            type: string
+          description: customAlias of the URL Short list
       responses:
         '200':
           description: 'Transfer request found'
@@ -246,13 +246,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  success: 
+                  success:
                     type: boolean
                   message:
                     type: string
                     default: Transfer request found
                   data:
-                   $ref: '#/components/schemas/DataURLShort'
+                    $ref: '#/components/schemas/DataURLShort'
         '404':
           description: 'Not found'
           content:
@@ -272,12 +272,12 @@ paths:
         - redirect url service
       summary: 'Redirect Service URL by customAlias'
       parameters:
-      - in: path
-        name: customAlias
-        required: true
-        schema:
-          type: string 
-        description: customAlias of the URL Short list
+        - in: path
+          name: customAlias
+          required: true
+          schema:
+            type: string
+          description: customAlias of the URL Short list
       responses:
         '302':
           description: 'Redirecting...'
@@ -286,13 +286,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  success: 
+                  success:
                     type: boolean
                   message:
                     type: string
                     default: Redirecting...
                   data:
-                   $ref: '#/components/schemas/DataURLShort'
+                    $ref: '#/components/schemas/DataURLShort'
         '404':
           description: 'Not found'
           content:
@@ -304,5 +304,4 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InternalServerError'              
-                
+                $ref: '#/components/schemas/InternalServerError'

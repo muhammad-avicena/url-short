@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 
 const errorHandlerMiddleware = (
   err: any,
@@ -8,7 +8,7 @@ const errorHandlerMiddleware = (
 ) => {
   res.status(err.status || 500).json({
     success: false,
-    message: err.message,
+    message: err.message
   });
 };
 
