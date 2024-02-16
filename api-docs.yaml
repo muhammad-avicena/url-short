@@ -1,0 +1,308 @@
+openapi: 3.0.0
+info:
+  title: 'URL Shortener API Documentation'
+  version: 1.0.0
+  description: 'This API documentation provides information on how to interact or consume with the API URL shortening service.'
+servers:
+  - url: https://api-url-shortner.avicena.dev
+    description: 'Production server'
+  - url: http://localhost:5001
+    description: 'Development server'
+components:
+  schemas:
+    DataURLShort: 
+      type: object
+      properties:
+        ID:
+          type: string
+          default: d9250aee-664b-4df2-8155-d5b6bd7e830e
+        originalUrl:
+          type: string
+          default: https://github.com/muhammad-avicena
+        customAlias: 
+          type: string
+          default: github-avicena
+        shortenUrl: 
+          type: string
+          default: github-avicena
+        expirationDate: 
+          type: string
+          default: 2029-02-16T08:46:36.000Z
+        createdAt: 
+          type: string
+          default: 2024-02-16T08:46:36.000Z
+    CreateURLShort:
+      type: object
+      properties:
+        originalUrl:
+          type: string
+          default: https://github.com/muhammad-avicena
+        customAlias:
+          type: string
+          maxLength: 16 
+          default: github-avicena
+      required:
+        - originalUrl
+    UpdateURLShort:
+      type: object
+      properties:
+        originalUrl:
+          type: string
+          default: https://github.com/muhammad-avicena
+        customAlias:
+          type: string
+          maxLength: 16 
+          default: github-avicena
+      required:
+        - originalUrl
+    BadRequest:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        message:
+          type: string
+    InternalServerError:
+      type: object
+      properties:
+        message:
+          type: string
+    NotFound:
+      type: object
+      properties:
+        success:
+          type: boolean 
+          default: false 
+        message:
+          type: string
+paths:
+  /api/v1/url-shorten:
+    post:
+      tags:
+        - url-shorten 
+      summary: 'Create URL Short'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateURLShort'
+      responses:
+        '200':
+          description: 'Short URL created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataURLShort'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError' 
+    get:
+      tags:
+        - url-shorten 
+      summary: 'List of All URL Short'
+      responses:
+        '200':
+          description: 'Short URL created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataURLShort'
+        '404':
+          description: 'Not found or empty list'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'             
+  /api/v1/url-shorten/{ID}:
+    put:
+      operationId: Update URL Short list by ID
+      tags:
+        - url-shorten
+      summary: 'Update URL Short list by ID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateURLShort'
+      parameters:
+      - in: path
+        name: ID
+        required: true
+        schema:
+          type: string 
+        description: ID of the URL Short list
+      responses:
+        '200':
+          description: 'Short URL updated'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: 
+                    type: boolean
+                  message:
+                    type: string
+                    default: Short URL updated
+                  data:
+                    $ref: '#/components/schemas/DataURLShort'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: 'Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      operationId: Delete URL Short list by ID
+      tags:
+        - url-shorten
+      summary: 'Delete URL Short list by ID'
+      parameters:
+      - in: path
+        name: ID
+        required: true
+        schema:
+          type: string 
+        description: ID of the URL Short list
+      responses:
+        '200':
+          description: 'Short URL deleted'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: 
+                    type: boolean
+                  message:
+                    type: string
+                    default: Short URL deleted
+                  data:
+                    $ref: '#/components/schemas/DataURLShort'
+        '400':
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: 'Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /api/v1/url-shorten/{customAlias}:
+    get:
+      operationId: Get URL Short list by customAlias
+      tags:
+        - url-shorten
+      summary: 'Get URL Short list by customAlias'
+      parameters:
+      - in: path
+        name: customAlias
+        required: true
+        schema:
+          type: string 
+        description: customAlias of the URL Short list
+      responses:
+        '200':
+          description: 'Transfer request found'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: 
+                    type: boolean
+                  message:
+                    type: string
+                    default: Transfer request found
+                  data:
+                   $ref: '#/components/schemas/DataURLShort'
+        '404':
+          description: 'Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /r/{customAlias}:
+    get:
+      operationId: Redirect Service URL by customAlias
+      tags:
+        - redirect url service
+      summary: 'Redirect Service URL by customAlias'
+      parameters:
+      - in: path
+        name: customAlias
+        required: true
+        schema:
+          type: string 
+        description: customAlias of the URL Short list
+      responses:
+        '302':
+          description: 'Redirecting...'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: 
+                    type: boolean
+                  message:
+                    type: string
+                    default: Redirecting...
+                  data:
+                   $ref: '#/components/schemas/DataURLShort'
+        '404':
+          description: 'Not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: 'Internal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'              
+                

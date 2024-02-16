@@ -1,11 +1,11 @@
-import express, { Request, Response, NextFunction } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 
-const router = express.Router();
+const router = Router();
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.json({
     message:
-      "URL Shortener API is running. Please refer `/api/docs` to the documentation for usage.",
+      "URL Shortener API is running. Please refer `/api-docs` to the documentation for usage.",
     developedBy: "Muhammad Avicena",
   });
 });
