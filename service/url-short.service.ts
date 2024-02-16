@@ -115,6 +115,38 @@ class UrlShortService implements IUrlShortService {
     }
   }
 
+  async getUrlShortByCustomAlias(
+    CustomAlias: string
+  ): Promise<IUrlShortResult> {
+    try {
+      const result = await this.urlShortDao.getUrlShortByCustomAlias(
+        CustomAlias
+      );
+
+      if (!result || Object.keys(result).length === 0) {
+        throw new StandardError({
+          success: false,
+          message: "Short URL not found",
+          status: 404,
+        });
+      }
+
+      return {
+        status: 200,
+        success: true,
+        message: "Short URL found",
+        data: result,
+      };
+    } catch (error: any) {
+      console.error("UrlShortService - getUrlShortByID:", error);
+      throw new StandardError({
+        success: false,
+        message: error.message,
+        status: error.status,
+      });
+    }
+  }
+
   async updateShortUrlByID(
     ID: string,
     originalUrl: string,

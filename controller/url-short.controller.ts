@@ -61,6 +61,22 @@ async function updateShortUrlByID(
   );
 }
 
+async function getUrlShortByCustomAlias(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  return handleRequest(
+    req,
+    res,
+    next,
+    async (urlShortService: UrlShortService) => {
+      const { customAlias } = req.params;
+      return await urlShortService.getUrlShortByCustomAlias(customAlias);
+    }
+  );
+}
+
 async function getRedirectUrl(req: Request, res: Response, next: NextFunction) {
   const { db } = req;
   const urlShortDao = new UrlShortDao(db);
@@ -112,6 +128,7 @@ export {
   getAllShortUrls,
   createShortUrl,
   getRedirectUrl,
+  getUrlShortByCustomAlias,
   updateShortUrlByID,
   deleteShortUrlByID,
 };
