@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   generateJakartaDate,
   generateJakartaDateFiveYearsLater
@@ -13,7 +14,7 @@ class UrlShortDao implements IUrlShortDao {
     this.db = db;
   }
 
-  async getAllShortUrls(): Promise<IUrlShortAttributes[]> {
+  async getAllShortUrls(): Promise<IUrlShortAttributes[] | any> {
     try {
       const result = await this.db.shortenedURL.findMany();
       return result;
@@ -30,7 +31,7 @@ class UrlShortDao implements IUrlShortDao {
   async createShortUrl(
     originalUrl: string,
     customAlias: string
-  ): Promise<IUrlShortAttributes> {
+  ): Promise<IUrlShortAttributes | any> {
     try {
       const generatedShortenUrl = this.generateShortUrl();
       const result = await this.db.shortenedURL.create({
@@ -71,7 +72,7 @@ class UrlShortDao implements IUrlShortDao {
     ID: string,
     originalUrl: string,
     customAlias: string
-  ): Promise<IUrlShortAttributes> {
+  ): Promise<IUrlShortAttributes | any> {
     try {
       const result = await this.db.shortenedURL.update({
         where: {
@@ -103,7 +104,9 @@ class UrlShortDao implements IUrlShortDao {
     }
   }
 
-  async getRedirectUrl(customAlias: string): Promise<IUrlShortAttributes> {
+  async getRedirectUrl(
+    customAlias: string
+  ): Promise<IUrlShortAttributes | any> {
     try {
       const result = await this.db.shortenedURL.findUnique({
         where: {
@@ -123,7 +126,7 @@ class UrlShortDao implements IUrlShortDao {
 
   async getUrlShortByCustomAlias(
     customAlias: string
-  ): Promise<IUrlShortAttributes> {
+  ): Promise<IUrlShortAttributes | any> {
     try {
       const result = await this.db.shortenedURL.findUnique({
         where: {
@@ -141,7 +144,7 @@ class UrlShortDao implements IUrlShortDao {
     }
   }
 
-  async deleteShortUrlByID(ID: string): Promise<IUrlShortAttributes> {
+  async deleteShortUrlByID(ID: string): Promise<IUrlShortAttributes | any> {
     try {
       const result = await this.db.shortenedURL.delete({
         where: {
