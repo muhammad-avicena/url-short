@@ -5,7 +5,7 @@
   "main": "dist/app.js",
   "scripts": {
     "start": "node ./dist/app.js",
-    "build": "npx prisma db push && npx prisma generate && tsc -p .",
+    "build": "npx prisma generate && npx prisma db push && tsc -p .",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon dist/app.js",
     "test": "mocha --check-leaks -r ts-node/register __test__/**/*.spec.ts",
     "lint": "eslint .",
