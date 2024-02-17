@@ -44,7 +44,7 @@ class UrlShortDao implements IUrlShortDao {
       });
       return result;
     } catch (error: any) {
-      console.error('UrlShortDao - createShortUrl:', error);
+      console.log('UrlShortDao - createShortUrl:', error.message);
       throw new StandardError({
         success: false,
         message: error.message,
@@ -82,14 +82,24 @@ class UrlShortDao implements IUrlShortDao {
           customAlias
         }
       });
+
+      console.log(result, 'isi result');
       return result;
     } catch (error: any) {
-      console.error('UrlShortDao - updateShortUrl:', error);
-      throw new StandardError({
-        success: false,
-        message: error.message,
-        status: 500
-      });
+      console.log('UrlShortDao - updateShortUrl:', error.message);
+      if (error.code === 'P2025') {
+        throw new StandardError({
+          success: false,
+          message: 'Short URL not found',
+          status: 404
+        });
+      } else {
+        throw new StandardError({
+          success: false,
+          message: error.message,
+          status: 500
+        });
+      }
     }
   }
 
@@ -141,11 +151,19 @@ class UrlShortDao implements IUrlShortDao {
       return result;
     } catch (error: any) {
       console.error('UrlShortDao - deleteShortUrlByShortCode:', error);
-      throw new StandardError({
-        success: false,
-        message: error.message,
-        status: 500
-      });
+      if (error.code === 'P2025') {
+        throw new StandardError({
+          success: false,
+          message: 'Short URL not found',
+          status: 404
+        });
+      } else {
+        throw new StandardError({
+          success: false,
+          message: error.message,
+          status: 500
+        });
+      }
     }
   }
 }

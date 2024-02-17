@@ -54,6 +54,9 @@ class UrlShortService implements IUrlShortService {
         customAlias
       );
 
+      const CACHE_KEY = 'allShortUrls';
+      await redisClient.del(CACHE_KEY);
+
       return {
         success: true,
         status: 200,
@@ -152,6 +155,20 @@ class UrlShortService implements IUrlShortService {
     customAlias: string
   ): Promise<IUrlShortResult> {
     try {
+      const result = await this.urlShortDao.updateShortUrlByID(
+        ID,
+        originalUrl,
+        customAlias
+      );
+
+      if (!result || Object.keys(result).length === 0) {
+        throw new StandardError({
+          success: false,
+          message: 'Short URL not found',
+          status: 404
+        });
+      }
+
       const getCustomAlias = await this.urlShortDao.getUrlShortByCustomAlias(
         customAlias ?? ''
       );
@@ -164,11 +181,9 @@ class UrlShortService implements IUrlShortService {
         });
       }
 
-      const result = await this.urlShortDao.updateShortUrlByID(
-        ID,
-        originalUrl,
-        customAlias
-      );
+      const CACHE_KEY = 'allShortUrls';
+      await redisClient.del(CACHE_KEY);
+
       return {
         status: 200,
         success: true,
@@ -176,7 +191,7 @@ class UrlShortService implements IUrlShortService {
         data: result
       };
     } catch (error: any) {
-      console.error('UrlShortService - updateShortUrl:', error);
+      // console.error('UrlShortService - updateShortUrl:', error);
       throw new StandardError({
         success: false,
         message: error.message,
@@ -212,7 +227,7 @@ class UrlShortService implements IUrlShortService {
             data: result
           }),
           'EX',
-          3600
+          600
         );
 
         return {
@@ -235,6 +250,17 @@ class UrlShortService implements IUrlShortService {
   async deleteShortUrlByID(ID: string): Promise<IUrlShortResult> {
     try {
       const result = await this.urlShortDao.deleteShortUrlByID(ID);
+
+      if (!result || Object.keys(result).length === 0) {
+        throw new StandardError({
+          success: false,
+          message: 'Short URL not found',
+          status: 404
+        });
+      }
+
+      const CACHE_KEY = 'allShortUrls';
+      await redisClient.del(CACHE_KEY);
       return {
         status: 200,
         success: true,
