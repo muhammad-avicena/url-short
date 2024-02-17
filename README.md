@@ -2,7 +2,7 @@
 
 <h1 align="center">Fancy to see you here <img src="https://raw.githubusercontent.com/muhammad-avicena/profile/master/wave.gif" width="30px" height="30px" /> </h1>
 
-hi, I'm Muhammad Avicena. In this project, I build The URL Shortner API where you can shortner your long URL into highly customize short link. I've implemented advanced security middleware such as rate-limiter, XSS protection, CSP, etc. Built using Node-Express-TypeScript, Redis, MySQL (Prisma ORM), Jest, Swagger UI Express, Helmet, Docker & AWS Lightsail deployment. This project is intended
+hi, I'm Muhammad Avicena. In this project, I build The URL Shortner API where you can shortner your long URL into highly customize short link. I've implemented advanced security middleware such as rate-limiter, XSS protection, CSP, etc. Built using Node-Express-TypeScript, Redis, MySQL (Prisma ORM), Jest, Swagger UI Express, Helmet, Docker.
 
 I am committed to staying up-to-date with industry trends and using the latest tools to develop innovative solutions that surpass expectations.
 Interested to have collaboration ? Find me on:
@@ -23,7 +23,6 @@ Interested to have collaboration ? Find me on:
 - Jest for Unit testing
 - Swagger UI for documentation
 - Docker
-- AWS Lightsail (Private Server Linux) for deployment
 
 ## KEY FEATURES 🌟
 
@@ -73,17 +72,17 @@ Interested to have collaboration ? Find me on:
 
 For the demonstration of the API, you can refer to "/api-docs".
 
-**Back-end endpoint:** [https://api-url-shortner.avicena.dev](https://api-url-shortner.avicena.dev).
+**Back-end endpoint:** [https://api-vodea.cyclic.app/](https://api-vodea.cyclic.app/).
 
-| Name                                | HTTP Method | Endpoint                                                                  | Requirements                                                                           |
-| ----------------------------------- | ----------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| **API Docs**                        | `GET`       | [/api-docs](https://api-url-shortner.avicena.dev/api-docs)                |                                                                                        |
-| **Create URL Shortner**             | `POST`      | [/api/v1/url-shortner](https://api-url-shortner.avicena.dev)              | Request Body: `originalUrl: string, customAlias: string`                               |
-| **Update URL Shortner by ID**       | `PUT`       | [/api/v1/url-shortner/:ID](https://api-url-shortner.avicena.dev)          | Request Params: `ID: string`, Request Body: `originalUrl: string, customAlias: string` |
-| **Get URL Shortner by customAlias** | `GET`       | [/api/v1/url-shortner/:customAlias](https://api-url-shortner.avicena.dev) | Request Params: `customAlias: string`                                                  |
-| **List of All URL Shortner**        | `GET`       | [/api/v1/url-shortner](https://api-url-shortner.avicena.dev)              |                                                                                        |
-| **Delete Transfer by ID**           | `DELETE`    | [/api/v1/url-shortner/:ID](https://api-url-shortner.avicena.dev)          | Request Params: `ID: string`                                                           |
-| **Redirect Service URL Shortner**   | `GET`       | [/r/:customAlias](https://api-url-shortner.avicena.dev/r/aviciii)         | Request Params: `customAlias: string`                                                  |
+| Name                                | HTTP Method | Endpoint                                                           | Requirements                                                                           |
+| ----------------------------------- | ----------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| **API Docs**                        | `GET`       | [/api-docs](https://api-vodea.cyclic.app/api-docs)                 |                                                                                        |
+| **Create URL Shortner**             | `POST`      | [/api/v1/url-shortnen](https://api-vodea.cyclic.app/)              | Request Body: `originalUrl: string, customAlias: string`                               |
+| **Update URL Shortner by ID**       | `PUT`       | [/api/v1/url-shortnen/:ID](https://api-vodea.cyclic.app/)          | Request Params: `ID: string`, Request Body: `originalUrl: string, customAlias: string` |
+| **Get URL Shortner by customAlias** | `GET`       | [/api/v1/url-shortnen/:customAlias](https://api-vodea.cyclic.app/) | Request Params: `customAlias: string`                                                  |
+| **List of All URL Shortner**        | `GET`       | [/api/v1/url-shortnen](https://api-vodea.cyclic.app/)              |                                                                                        |
+| **Delete Transfer by ID**           | `DELETE`    | [/api/v1/url-shortnen/:ID](https://api-vodea.cyclic.app/)          | Request Params: `ID: string`                                                           |
+| **Redirect Service URL Shortner**   | `GET`       | [/r/:customAlias](https://api-vodea.cyclic.app/)                   | Request Params: `customAlias: string`                                                  |
 
 ## How to Run 📑
 
@@ -133,12 +132,26 @@ For the demonstration of the API, you can refer to "/api-docs".
    npx prisma studio
    ```
 
+## Component
+
+### Redis For Caching
+
+- Before cache
+  ![cache-redis](./assets-github/before-cache.PNG)
+
+- After cache
+  ![cache-redis](./assets-github/after-cache.PNG)
+
+### Swagger
+
 ## DEPLOYMENT ⚙️
 
 ### Docker HUB
 
-### AWS Deployment
+![docker_hub](./assets-github/docker_hub.PNG)
 
-The project has been successfully deployed using AWS Lightsail (Private Server Linux). You can access the production version of the API by following this link: [https://api-url-shortner.avicena.dev](https://api-url-shortner.avicena.dev).
+### API Deployment
+
+The project has been successfully deployed using Cylic. You can access the production version of the API by following this link: [https://api-vodea.cyclic.app/](https://api-vodea.cyclic.app/).
 
 Feel free to explore the API and try out the different features. I appreciate any feedback and suggestions to further improve.
